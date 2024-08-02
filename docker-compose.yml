@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    build:
+      context: ./db
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/data:/var/lib/mysql
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      retries: 3
+      start_period: 30s
+      timeout: 10s
+
+  backend:
+    build:
+      context: ./backend
+    tty: true
+
+    stdin_open: true
+
+    restart: always
+
+    env_file:
+      - .env
+    volumes:
+      - ./backend/src/:/app/src
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      retries: 3
+      start_period: 30s
+      timeout: 10s
