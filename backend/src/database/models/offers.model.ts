@@ -1,23 +1,8 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import db from '.';
-import Orders from './orders.model';
 import Sponsors from './sponsors.model';
-
-interface IOffers {
-  id: number;
-  tax: string;
-  tariff: string;
-  adValorem: string;
-  float: string;
-  iof: string;
-  expiresIn: Date;
-  paymentStatusSponsor?: boolean;
-  paymentStatusProvider?: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  orderId?: number;
-  sponsorId?: number;
-}
+import { Order } from './orders.model';
+import { IOffers } from '../../Interfaces/Offers/IOffers';
 
 type OffersCreationAttributes = Optional<IOffers, 'id'>;
 
@@ -98,12 +83,12 @@ Offers.init({
   timestamps: false,
 });
 
-Offers.belongsTo(Orders, {
+Offers.belongsTo(Order, {
   foreignKey: 'orderId',
   as: 'order',
 });
 
-Orders.hasMany(Offers, {
+Order.hasMany(Offers, {
   foreignKey: 'orderId',
   as: 'offers',
 });

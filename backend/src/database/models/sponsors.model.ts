@@ -1,35 +1,41 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import db from '.';
-import Cnpjs from './cnpj.model';
-import Offers from './offers.model';
+import Cnpj from './cnpj.model';
+import { ISponosor } from '../../Interfaces/Sponsors/ISponsor';
 
-interface ISponsors {
-  id: number;
-  name: string;
-  address: string;
-  contactName: string;
-  contactEmail: string;
-  contactPhone: string;
-  createdAt: Date;
-  updatedAt: Date;
-  cnpjId?: number;
-}
+interface SponsorCreationAttributes extends Optional<ISponosor, 'id'> {}
 
-type SponsorsCreationAttributes = Optional<ISponsors, 'id'>;
-
-class Sponsors extends Model<ISponsors, SponsorsCreationAttributes> implements ISponsors {
+export class Sponsor extends Model<ISponosor, SponsorCreationAttributes> implements ISponosor {
   public id!: number;
   public name!: string;
-  public address!: string;
-  public contactName!: string;
-  public contactEmail!: string;
-  public contactPhone!: string;
+  public tradingName?: string;
+  public cashforceTax?: string;
+  public responsibleName?: string;
+  public responsibleEmail?: string;
+  public responsiblePosition?: string;
+  public responsiblePhone?: string;
+  public responsibleMobile?: string;
+  public website?: string;
+  public postalCode?: string;
+  public address?: string;
+  public number?: string;
+  public complement?: string;
+  public neighborhood?: string;
+  public city?: string;
+  public state?: string;
+  public bank?: string;
+  public bankAgency?: string;
+  public account?: string;
+  public phoneNumber?: string;
+  public situation?: string;
+  public situationDate?: string;
   public createdAt!: Date;
   public updatedAt!: Date;
   public cnpjId?: number;
+  public email?: string;
 }
 
-Sponsors.init({
+Sponsor.init({
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -40,22 +46,27 @@ Sponsors.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
-  address: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  contactName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  contactEmail: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  contactPhone: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+  tradingName: DataTypes.STRING,
+  cashforceTax: DataTypes.STRING,
+  responsibleName: DataTypes.STRING,
+  responsibleEmail: DataTypes.STRING,
+  responsiblePosition: DataTypes.STRING,
+  responsiblePhone: DataTypes.STRING,
+  responsibleMobile: DataTypes.STRING,
+  website: DataTypes.STRING,
+  postalCode: DataTypes.STRING,
+  address: DataTypes.STRING,
+  number: DataTypes.STRING,
+  complement: DataTypes.STRING,
+  neighborhood: DataTypes.STRING,
+  city: DataTypes.STRING,
+  state: DataTypes.STRING,
+  bank: DataTypes.STRING,
+  bankAgency: DataTypes.STRING,
+  account: DataTypes.STRING,
+  phoneNumber: DataTypes.STRING,
+  situation: DataTypes.STRING,
+  situationDate: DataTypes.STRING,
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,
@@ -67,29 +78,25 @@ Sponsors.init({
   cnpjId: {
     type: DataTypes.INTEGER,
     references: {
-      model: 'cnpjs',
+      model: Cnpj,
       key: 'id',
     },
   },
+  email: DataTypes.STRING,
 }, {
   sequelize: db,
-  modelName: 'sponsors',
-  timestamps: false,
+  tableName: 'sponsors',
+  timestamps: true,
 });
 
-Sponsors.belongsTo(Cnpjs, {
+Sponsor.belongsTo(Cnpj, {
   foreignKey: 'cnpjId',
   as: 'cnpj',
 });
 
-Cnpjs.hasMany(Sponsors, {
+Cnpj.hasMany(Sponsor, {
   foreignKey: 'cnpjId',
   as: 'sponsors',
 });
 
-Sponsors.hasMany(Offers, {
-  foreignKey: 'sponsorId',
-  as: 'offers',
-});
-
-export default Sponsors;
+export default Sponsor;

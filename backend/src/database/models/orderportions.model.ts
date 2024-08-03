@@ -1,17 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import db from '.';
-import Orders from './orders.model';
-
-interface IOrderportions {
-  id: number;
-  nDup: string;
-  dVenc: string;
-  vDup: string;
-  availableToMarket?: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  orderId?: number;
-}
+import { Order } from './orders.model';
+import { IOrderportions } from '../../Interfaces/Orderportions/IOrderportions';
 
 type OrderportionsCreationAttributes = Optional<IOrderportions, 'id'>;
 
@@ -67,12 +57,12 @@ Orderportions.init({
   timestamps: false,
 });
 
-Orderportions.belongsTo(Orders, {
+Orderportions.belongsTo(Order, {
   foreignKey: 'orderId',
   as: 'order',
 });
 
-Orders.hasMany(Orderportions, {
+Order.hasMany(Orderportions, {
   foreignKey: 'orderId',
   as: 'orderportions',
 });

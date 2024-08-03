@@ -1,34 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import db from '.';
 import Cnpjs from './cnpj.model';
-
-interface IBuyers {
-  id: number;
-  name: string;
-  tradingName?: string;
-  cashforceTax?: string;
-  responsibleName?: string;
-  responsibleEmail?: string;
-  responsiblePosition?: string;
-  responsiblePhone?: string;
-  responsibleMobile?: string;
-  website?: string;
-  postalCode?: string;
-  address?: string;
-  number?: string;
-  complement?: string;
-  neighborhood?: string;
-  city?: string;
-  state?: string;
-  phoneNumber?: string;
-  situation?: string;
-  situationDate?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  cnpjId?: number;
-  confirm?: boolean;
-  email?: string;
-}
+import { IBuyers } from '../../Interfaces/Buyers/IBuyers';
 
 type BuyersCreationAttributes = Optional<IBuyers, 'id'>;
 
