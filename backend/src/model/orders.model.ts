@@ -1,65 +1,41 @@
+import { Op } from 'sequelize';
+import Order from '../database/models/orders.model';
+import Buyers from '../database/models/buyers.model';
+import Providers from '../database/models/providers.model';
+import { IOrders } from '../Interfaces/Orders/IOrders';
 import { IOrdersModel } from '../Interfaces/Orders/IOrdersModel';
-import CNPJ from '../database/models/cnpj.model';
-import User from '../database/models/users.model';
-import Buyer from '../database/models/buyers.model';
-import { Provider } from '../database/models/providers.model';
-import { IOrder } from '../Interfaces/Orders/IOrders';
 
 export default class OrdersModel implements IOrdersModel {
-  private model = OrdersModel;
+  private model = Order;
 
-  public async findAll(): Promise<IOrder[]> {
-    const dbData = await this.model.findAll({
-      include: [
-        { model: CNPJ, as: 'cnpj' },
-        { model: User, as: 'user' },
-        { model: Buyer, as: 'buyer' },
-        { model: Provider, as: 'provider' }
-      ]
-    });
-    return dbData as unknown as IOrder[];
-  }
+  async findAllWithAssociations(filters: { status?: string; startDate?: Date; endDate?: Date } = {}): Promise<IOrders[]> {
+    try {
+      const where: any = {};
 
-  public async findByPk(id: number): Promise<IOrder | null> {
-    const order = await this.model.findByPk(id, {
-      include: [
-        { model: CNPJ, as: 'cnpj' },
-        { model: User, as: 'user' },
-        { model: Buyer, as: 'buyer' },
-        { model: Provider, as: 'provider' }
-      ]
-    });
-    return order as IOrder | null;
-  }
+      if (filters.status) {
+        where.orderStatusBuyer = filters.status;
+      }
 
-  public async create(orderData: {
-    cnpjId: number,
-    userId: number,
-    buyerId: number,
-    providerId: number,
-    status: number
-  }): Promise<IOrder> {
-    const newOrder = await this.model.create(orderData);
-    return newOrder as unknown as IOrder;
-  }
+      if (filters.startDate && filters.endDate) {
+        where.createdAt = {
+          [Op.between]: [filters.startDate, filters.endDate],
+        };
+      }
 
-  public async update(id: number, updatedData: {
-    cnpjId?: number,
-    userId?: number,
-    buyerId?: number,
-    providerId?: number,
-    status?: number
-  }): Promise<boolean> {
-    const [updated] = await this.model.update(updatedData, {
-      where: { id },
-    });
-    return updated > 0;
-  }
+      const dbData = await this.model.findAll({
+        where,
+        include: [
+          { model: Buyers, as: 'buyer', attributes: ['name'] },
+          { model: Providers, as: 'provider', attributes: ['name'] }
+        ],
+        attributes: ['orderNfId', 'emissionDate', 'value', 'orderStatusBuyer'],
+      });
 
-  public async destroy(id: number): Promise<boolean> {
-    const deleted = await this.model.destroy({
-      where: { id },
-    });
-    return deleted > 0;
+
+      return dbData.map((order: any) => order.toJSON() as IOrders);
+    } catch (error) {
+      console.error('Error in findAllWithAssociations:', error);
+      throw new Error('Error fetching orders');
+    }
   }
 }

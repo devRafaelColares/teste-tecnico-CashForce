@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import db from '.';
-import Cnpjs from './cnpj.model';
+import Cnpj from './cnpj.model';
 import { IBuyers } from '../../Interfaces/Buyers/IBuyers';
 
 type BuyersCreationAttributes = Optional<IBuyers, 'id'>;
@@ -85,12 +85,12 @@ Buyers.init({
   timestamps: false,
 });
 
-Buyers.belongsTo(Cnpjs, {
+Buyers.belongsTo(Cnpj, {
   foreignKey: 'cnpjId',
   as: 'cnpj',
 });
 
-Cnpjs.hasMany(Buyers, {
+Cnpj.hasMany(Buyers, {
   foreignKey: 'cnpjId',
   as: 'buyers',
 });

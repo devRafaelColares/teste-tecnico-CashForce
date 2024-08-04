@@ -1,9 +1,5 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import db from '.';
-import Buyers from './buyers.model';
-import Sponsors from './sponsors.model';
-import { Order } from './orders.model';
-import { Provider } from './providers.model';
 import { ICnpjs } from '../../Interfaces/Cnpjs/ICnpjs';
 
 type CnpjCreationAttributes = Optional<ICnpjs, 'id'>;
@@ -46,24 +42,5 @@ Cnpj.init({
   timestamps: false,
 });
 
-Cnpj.hasMany(Buyers, {
-  foreignKey: 'cnpjId',
-  as: 'buyers',
-});
-
-Cnpj.hasMany(Order, {
-  foreignKey: 'cnpjId',
-  as: 'orders',
-});
-
-Cnpj.hasMany(Provider, {
-  foreignKey: 'cnpjId',
-  as: 'providers',
-});
-
-Cnpj.hasMany(Sponsors, {
-  foreignKey: 'cnpjId',
-  as: 'sponsors',
-});
 
 export default Cnpj;

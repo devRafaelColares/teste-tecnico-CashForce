@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import db from '.';
-import { Order } from './orders.model';
+import Order from './orders.model';
 import { IOrderportions } from '../../Interfaces/Orderportions/IOrderportions';
 
 type OrderportionsCreationAttributes = Optional<IOrderportions, 'id'>;

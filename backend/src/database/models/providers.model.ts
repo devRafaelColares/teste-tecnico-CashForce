@@ -5,7 +5,7 @@ import { IProviders } from '../../Interfaces/Providers/IProviders';
 
 interface ProviderCreationAttributes extends Optional<IProviders, 'id'> {}
 
-export class Provider extends Model<IProviders, ProviderCreationAttributes> implements IProviders {
+class Provider extends Model<IProviders, ProviderCreationAttributes> implements IProviders {
   public id!: number;
   public name!: string;
   public tradingName?: string;
@@ -92,3 +92,15 @@ Provider.init({
   tableName: 'providers',
   timestamps: true,
 });
+
+Provider.belongsTo(Cnpj, {
+  foreignKey: 'cnpjId',
+  as: 'cnpj',
+});
+
+Cnpj.hasMany(Provider, {
+  foreignKey: 'cnpjId',
+  as: 'providers',
+});
+
+export default Provider;

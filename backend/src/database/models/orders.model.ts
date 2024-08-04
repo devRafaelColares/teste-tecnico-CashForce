@@ -1,14 +1,14 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import db from '.';
-import Cnpj from './cnpj.model';
-import Users from './users.model';
 import Buyers from './buyers.model';
-import { Provider } from './providers.model';
-import { IOrder } from '../../Interfaces/Orders/IOrders';
+import Cnpj from './cnpj.model';
+import Providers from './providers.model';
+import Users from './users.model';
+import { IOrders } from '../../Interfaces/Orders/IOrders';
 
-interface OrderCreationAttributes extends Optional<IOrder, 'id'> {}
+type OrdersCreationAttributes = Optional<IOrders, 'id'>;
 
-export class Order extends Model<IOrder, OrderCreationAttributes> implements IOrder {
+class Orders extends Model<IOrders, OrdersCreationAttributes> implements IOrders {
   public id!: number;
   public orderNfId!: string;
   public orderNumber!: string;
@@ -34,15 +34,17 @@ export class Order extends Model<IOrder, OrderCreationAttributes> implements IOr
   public deliveryCtrc?: string;
 }
 
-Order.init({
+Orders.init({
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
+    allowNull: false,
   },
   orderNfId: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
   },
   orderNumber: {
     type: DataTypes.STRING,
@@ -71,28 +73,28 @@ Order.init({
   cnpjId: {
     type: DataTypes.INTEGER,
     references: {
-      model: Cnpj,
+      model: 'cnpjs',
       key: 'id',
     },
   },
   userId: {
     type: DataTypes.INTEGER,
     references: {
-      model: Users,
+      model: 'users',
       key: 'id',
     },
   },
   buyerId: {
     type: DataTypes.INTEGER,
     references: {
-      model: Buyers,
+      model: 'buyers',
       key: 'id',
     },
   },
   providerId: {
     type: DataTypes.INTEGER,
     references: {
-      model: Provider,
+      model: 'providers',
       key: 'id',
     },
   },
@@ -103,15 +105,28 @@ Order.init({
   deliveryCtrc: DataTypes.STRING,
 }, {
   sequelize: db,
-  tableName: 'orders',
-  timestamps: true,
+  modelName: 'orders',
+  timestamps: false,
 });
 
-Order.belongsTo(Cnpj, { foreignKey: 'cnpjId' });
-Order.belongsTo(Users, { foreignKey: 'userId' });
-Order.belongsTo(Buyers, { foreignKey: 'buyerId' });
-Order.belongsTo(Provider, { foreignKey: 'providerId' });
-Cnpj.hasMany(Order, { foreignKey: 'cnpjId' });
-Users.hasMany(Order, { foreignKey: 'userId' });
-Buyers.hasMany(Order, { foreignKey: 'buyerId' });
-Provider.hasMany(Order, { foreignKey: 'providerId' });
+Orders.belongsTo(Cnpj, {
+  foreignKey: 'cnpjId',
+  as: 'cnpj',
+});
+
+Orders.belongsTo(Buyers, {
+  foreignKey: 'buyerId',
+  as: 'buyer',
+});
+
+Orders.belongsTo(Providers, {
+  foreignKey: 'providerId',
+  as: 'provider',
+});
+
+Orders.belongsTo(Users, {
+  foreignKey: 'userId',
+  as: 'user',
+});
+
+export default Orders;
