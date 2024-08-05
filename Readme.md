@@ -61,7 +61,7 @@ Para rodar a aplicação, siga as instruções abaixo:
 2. **Clone o repositório:**
 
    ```bash
-   git clone <URL_DO_REPOSITORIO>
+   git clone https://github.com/devRafaelColares/teste-tecnico-CashForce.git
    cd teste-tecnico-CashForce/
    ```
 Suba os contêineres utilizando Docker Compose:
