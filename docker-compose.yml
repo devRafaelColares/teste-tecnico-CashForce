@@ -4,13 +4,6 @@ services:
   db:
     build:
       context: ./db
-    
-    tty: true
-    
-    stdin_open: true
-
-    restart: always
-
     env_file:
       - .env
     ports:
