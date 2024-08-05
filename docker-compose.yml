@@ -4,6 +4,13 @@ services:
   db:
     build:
       context: ./db
+    
+    tty: true
+    
+    stdin_open: true
+
+    restart: always
+
     env_file:
       - .env
     ports:
@@ -37,6 +44,27 @@ services:
       - "3000:3000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      retries: 3
+      start_period: 30s
+      timeout: 10s
+
+  frontend:
+    build:
+      context: ./frontend
+    tty: true
+    stdin_open: true
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./frontend/src/:/app/src
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173/health"]
       interval: 30s
       retries: 3
       start_period: 30s
